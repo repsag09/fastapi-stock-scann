@@ -51,16 +51,14 @@ def home(request: Request, forward_pe: Optional[float] = None, dividend_yield: O
     
     stocks = stocks.all()
 
-    context = {
+    return templates.TemplateResponse("home.html", {
         "request": request, 
         "stocks": stocks, 
         "dividend_yield": dividend_yield,
         "forward_pe": forward_pe,
         "ma200": ma200,
         "ma50": ma50
-    }
-    
-    return templates.TemplateResponse(name="home.html", context=context)
+    })
 
 
 def fetch_stock_data(id: int):
@@ -100,3 +98,4 @@ async def create_stock(stock_request: StockRequest, background_tasks: Background
         "code": "success",
         "message": "stock was added to the database"
     }
+
