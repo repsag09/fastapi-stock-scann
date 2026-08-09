@@ -1,11 +1,15 @@
 import models
 import yfinance
-from fastapi import FastAPI, Request, Depends, BackgroundTasks
+from fastapi import FastAPI, Request, Depends, BackgroundTasks, Query
 from fastapi.templating import Jinja2Templates
 from database import SessionLocal, engine
 from pydantic import BaseModel 
 from models import Stock
 from sqlalchemy.orm import Session
+
+# New imports
+from app.screener import load_template, apply_template
+from app.data_provider import YFinanceProvider, PolygonProvider
 
 app = FastAPI()
 
@@ -97,3 +101,26 @@ async def create_stock(stock_request: StockRequest, background_tasks: Background
         "code": "success",
         "message": "stock was added to the database"
     }
+
+
+# New endpoint: run Minervini template
+@app.get("/screener/templates/minervini")
+def minervini_template(provider: str = Query("yfinance", description="data provider: yfinance or polygon"), db: Session = Depends(get_db)):
+    template = load_template("minervini")
+
+    if provider == "polygon":
+        data_provider = PolygonProvider()
+    else:
+        data_provider = YFinanceProvider()
+
+    symbols = [s.symbol for s in db.query(Stock).all()]
+    results = []
+    for symbol in symbols:
+        df = data_provider.get_history(symbol, period="1y")
+        if df is None or df.empty:
+            results.append({"symbol": symbol, "error": "no data"})
+            continue
+        matched, flags = apply_template(df, template, provider=data_provider)
+        results.append({"symbol": symbol, "matched": matched, "flags": flags})
+
+    return {"template": template.get("name"), "results": results}

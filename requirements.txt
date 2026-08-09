@@ -3,3 +3,7 @@ uvicorn
 jinja2
 yfinance
 sqlalchemy
+pandas
+numpy
+requests
+pytest

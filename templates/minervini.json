@@ -1,0 +1,16 @@
+{
+  "name": "minervini",
+  "description": "Minervini Trend Template (default thresholds)",
+  "params": {
+    "min_price_vs_ma": 1.0,
+    "ma_ordering": true,
+    "ma_slope_lookback": 20,
+    "min_ma200_slope": 0.0,
+    "breakout_lookback": 250,
+    "breakout_multiplier": 1.0,
+    "volume_avg_lookback": 50,
+    "volume_multiplier": 1.5,
+    "rs_period_days": 252,
+    "min_rs_pct": 0.7
+  }
+}
