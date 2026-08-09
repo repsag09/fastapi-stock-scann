@@ -1,3 +1,4 @@
+from typing import Optional
 import models
 import yfinance
 from fastapi import FastAPI, Request, Depends, BackgroundTasks
@@ -26,7 +27,7 @@ def get_db():
 
 
 @app.get("/")
-def home(request: Request, forward_pe = None, dividend_yield = None, ma50 = None, ma200 = None, db: Session = Depends(get_db)):
+def home(request: Request, forward_pe: Optional[float] = None, dividend_yield: Optional[float] = None, ma50: Optional[bool] = None, ma200: Optional[bool] = None, db: Session = Depends(get_db)):
     """
     show all stocks in the database and button to add more
     button next to each stock to delete from database
